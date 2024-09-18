@@ -460,6 +460,22 @@ class BuilderTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
     }
+
+    public function testUnset2Field(): void
+    {
+        $qb = $this->getTestQueryBuilder()
+            ->updateOne()
+            ->field('identifier')->unsetField()
+            ->field('username')->equals('boo');
+
+        $expected = ['username' => 'boo'];
+        self::assertEquals($expected, $qb->getQueryArray());
+
+        $expected = [
+            '$unset' => ['identifier' => 1],
+        ];
+        self::assertEquals($expected, $qb->getNewObj());
+    }
 }
 
 class TestStage extends Stage
