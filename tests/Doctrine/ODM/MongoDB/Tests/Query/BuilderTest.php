@@ -454,6 +454,22 @@ class BuilderTest extends BaseTestCase
         self::assertInstanceOf(IteratorAggregate::class, $query);
     }
 
+    public function testUnset2Field(): void
+    {
+        $qb = $this->getTestQueryBuilder()
+            ->updateOne()
+            ->field('identifier')->unsetField()
+            ->field('username')->equals('boo');
+
+        $expected = ['username' => 'boo'];
+        self::assertEquals($expected, $qb->getQueryArray());
+
+        $expected = [
+            '$unset' => ['identifier' => 1],
+        ];
+        self::assertEquals($expected, $qb->getNewObj());
+    }
+
     public function testDeepClone(): void
     {
         $qb = $this->getTestQueryBuilder();
